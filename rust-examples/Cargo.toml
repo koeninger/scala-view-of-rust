@@ -1,0 +1,8 @@
+[package]
+name = "rust-examples"
+version = "0.1.0"
+authors = ["cody koeninger <cody@koeninger.org>"]
+
+[[bin]]
+name = "hello"
+path = "src/hello.rs"

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      img {
+        width: 100%;
+        height: auto;
+      }
+      img#kixer-logo {
+        width: 130px;
+        height: 54px;
+      }
+      ul, ol {
+        margin: 6px 0 6px 0;  
+      }
+      li {
+        margin: 0 0 12px 0;  
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# A Scala view of Rust
+
+cody@koeninger.org
+
+<image src="slides/kixer-logo.png" id="kixer-logo" />
+
+https://koeninger.github.io/scala-view-of-rust
+
+I'm a Rust noob... take what I say with a grain of salt
+
+---
+
+## Scala = Java + ML
+
+* Need access to JVM libraries
+* But still want a sane modern language
+  - static typing and inference
+  - controlled mutability
+  - closures
+  - pattern matching
+  - parametric polymorphism / generics
+  - ad hoc polymorphism / typeclasses
+  - macros
+* OK with cost of garbage collection, latency, memory footprint
+---
+
+## Rust = C + ML
+
+* Need predictable latency / footprint, can't afford garbage collection
+* But still want a sane modern language
+  - static typing and inference
+  - controlled mutability
+  - closures
+  - pattern matching
+  - parametric polymorphism / generics
+  - ad hoc polymorphism / typeclasses
+  - macros
+* OK with cost of having to think more about memory
+  - because the language helps you get it right, usually at **compile time**
+  - hey, as a bonus, no more null pointers or data races
+
+
+---
+## Hello: Scala
+
+```scala
+import scala.io.StdIn
+
+object Hello {
+  def main(args: Array[String]) {
+    println("What's your name?")
+    StdIn.readLine() match {
+      case name: String => println(s"Hello, $name")
+      case _ => println("Sorry, I didn't hear your null pointer")
+    }
+  }
+}
+```
+
+---
+## Hello: Rust
+
+```c
+use std::io;
+
+fn main() {
+    println!("What's your name?");
+    let mut name = String::new();
+    match io::stdin().read_line(&mut name) {
+        Ok(_) => println!("Hello, {}", name),
+        Err(e) => println!("Sorry, {}", e)
+    }
+}
+```
+---
+## Building your code: Scala
+
+* install JVM + sbt
+* sbt compile
+* sbt console
+* look for libraries on maven central or github, add them to build.sbt
+* sbt test (after deciding on a ~~religion~~ test framework)
+* install JVM on your server
+* sbt assembly
+* copy fat jar to server and run
+
+---
+## Building your code: Rust
+
+* install cargo
+* cargo build
+* feel sad about the lack of a repl :(
+* look for libraries on crates.io or github, add them to Cargo.toml
+* cargo test (using the simple built-in test framework)
+* check build architecture matches server architecture (or cross compile)
+* cargo build --release
+* copy statically linked binary to server and run
+
+    </textarea>
+    <script src="slides/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
