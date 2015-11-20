@@ -53,10 +53,12 @@ I'm a Rust noob... take what I say with a grain of salt
 * But still want a sane modern language
   - static typing and inference
   - controlled mutability
+  - algebraic data types
   - closures
   - pattern matching
   - parametric polymorphism / generics
   - ad hoc polymorphism / typeclasses
+  - higher kinded types
   - macros
 * OK with cost of garbage collection, latency, memory footprint
 ---
@@ -67,10 +69,12 @@ I'm a Rust noob... take what I say with a grain of salt
 * But still want a sane modern language
   - static typing and inference
   - controlled mutability
+  - algebraic data types
   - closures
   - pattern matching
   - parametric polymorphism / generics
   - ad hoc polymorphism / typeclasses
+  - ~~higher kinded types~~
   - macros
 * OK with cost of having to think more about memory
   - because the language helps you get it right, usually at **compile time**
@@ -176,7 +180,72 @@ fn main() {
     y = None;
     no_blowup(&y);
 }
-```  
+```
+---
+## Ownership: Rust only
+```c
+fn main() {
+    let three = outer();
+    println!("Leaving main"); // Dropping three
+}
+
+fn outer() -> Entity {
+    let one = Entity::new(1);
+    let two = Entity::new(2);
+    let three = Entity::new(3);
+
+    inner(two);
+
+    // COMPILE error: use of moved value
+    //println!("this would be use-after-free {:?}", two);
+
+    println!("Leaving Outer");        
+    three // Dropping one
+}
+
+fn inner(e: Entity) {
+    println!("Leaving Inner"); // Dropping two
+}
+```
+---
+## Borrowing references: Rust only
+
+* two kinds of references
+  - shared reference: **&**   
+  - mutable reference: **&mut**
+* two rules
+  - a reference can't live longer than the thing it refers to
+  - a mutable reference can't have an alias (another live reference)
+--
+
+* the borrow checker enforces these rules at compile time
+* the mechanism it uses is subtyping of lifetime parameters: **'a**
+* 'a is a **subtype** of 'b if 'a outlives 'b, aka 'a is **bigger** in scope than 'b
+* lifetime parameters are usually elided from view
+
+---
+
+## Reference that would live too long: Rust only
+
+```c
+// COMPILE error: s does not live long enough
+fn as_str(e: &Entity) -> &str {
+    let s = format!("{:?}", e);
+    &s
+}
+```
+--
+
+```
+// this isn't valid syntax, but an approximate desugaring
+fn as_str<'a>(e: &'a Entity) -> &'a str {
+  'b: {
+    let s = format!("{:?}", e);
+    return &'a s
+  }
+}
+```
+
     </textarea>
     <script src="slides/remark-latest.min.js">
     </script>

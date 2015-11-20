@@ -10,3 +10,7 @@ path = "src/hello.rs"
 [[bin]]
 name = "nullptr"
 path = "src/nullptr.rs"
+
+[[bin]]
+name = "ownership"
+path = "src/ownership.rs"
