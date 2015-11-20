@@ -113,26 +113,70 @@ fn main() {
 ## Building your code: Scala
 
 * install JVM + sbt
-* sbt compile
+* sbt run
 * sbt console
 * look for libraries on maven central or github, add them to build.sbt
 * sbt test (after deciding on a ~~religion~~ test framework)
 * install JVM on your server
 * sbt assembly
-* copy fat jar to server and run
+* copy fat jar to server and run it
 
 ---
 ## Building your code: Rust
 
 * install cargo
-* cargo build
+* cargo run
 * feel sad about the lack of a repl :(
 * look for libraries on crates.io or github, add them to Cargo.toml
 * cargo test (using the simple built-in test framework)
-* check build architecture matches server architecture (or cross compile)
+* check that build architecture matches server (or cross compile)
 * cargo build --release
-* copy statically linked binary to server and run
+* copy statically linked binary to server and run it
 
+---
+## Null Pointers: Scala
+
+```scala
+class Bad {
+    def blowup(opt: Option[Int]) {
+      opt.map(x => println(s"I got an $x"))
+    }
+
+    val x = Some(23)
+    // scala would complain if this was a local variable instead of a class variable
+    var y: Option[Int] = _
+
+    blowup(x)
+
+    // RUNTIME error: java.lang.NullPointerException
+    blowup(y)
+}
+```
+---
+## Null Pointers: Rust
+```c
+fn no_blowup(opt: &Option<u32>) {
+    opt.map(|x| println!("I got an {:?}", x));
+}
+
+fn main() {
+    let x = Some(23);
+    // COMPILE warning: single-assignment variable doesn't need to be mutable
+    let mut y;
+    
+    no_blowup(&x);
+
+    // COMPILE error: use of possibly uninitialized variable: `y`
+    // no_blowup(&y);
+
+    // COMPILE error: mismatched types
+    // y = std::ptr::null();
+    // no_blowup(&y);
+
+    y = None;
+    no_blowup(&y);
+}
+```  
     </textarea>
     <script src="slides/remark-latest.min.js">
     </script>

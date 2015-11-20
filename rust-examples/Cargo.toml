@@ -6,3 +6,7 @@ authors = ["cody koeninger <cody@koeninger.org>"]
 [[bin]]
 name = "hello"
 path = "src/hello.rs"
+
+[[bin]]
+name = "nullptr"
+path = "src/nullptr.rs"
