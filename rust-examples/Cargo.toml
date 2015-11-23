@@ -14,3 +14,15 @@ path = "src/nullptr.rs"
 [[bin]]
 name = "ownership"
 path = "src/ownership.rs"
+
+[[bin]]
+name = "datarace"
+path = "src/datarace.rs"
+
+[[bin]]
+name = "newtype"
+path = "src/newtype.rs"
+
+[[bin]]
+name = "macros"
+path = "src/macros.rs"

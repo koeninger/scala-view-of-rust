@@ -43,3 +43,12 @@ fn inner(e: Entity) {
 //    let s = format!("{:?}", e);
 //    &s
 //}
+
+// fn use_after_realloc() {
+//     let mut v = Vec::with_capacity(1);
+//     v.push(0);
+//     let head = &v[0];
+//     // COMPILE error: cannot borrow `v` as mutable because it is also borrowed as immutable
+//     v.push(1);
+//     println!("head is {}", head);
+// }

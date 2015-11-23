@@ -182,7 +182,7 @@ fn main() {
 }
 ```
 ---
-## Ownership: Rust only
+## Ownership: Rust
 ```c
 fn main() {
     let three = outer();
@@ -208,7 +208,7 @@ fn inner(e: Entity) {
 }
 ```
 ---
-## Borrowing references: Rust only
+## Borrowing references: Rust
 
 * two kinds of references
   - shared reference: **&**   
@@ -218,19 +218,18 @@ fn inner(e: Entity) {
   - a mutable reference can't have an alias (another live reference)
 --
 
-* the borrow checker enforces these rules at compile time
-* the mechanism it uses is subtyping of lifetime parameters: **'a**
+* enforced at compile time via subtyping of lifetime parameters: **'a**
 * 'a is a **subtype** of 'b if 'a outlives 'b, aka 'a is **bigger** in scope than 'b
-* lifetime parameters are usually elided from view
+* lifetime parameters are usually inferred
 
 ---
 
-## Reference that would live too long: Rust only
+## Reference that would live too long: Rust
 
 ```c
-// COMPILE error: s does not live long enough
 fn as_str(e: &Entity) -> &str {
     let s = format!("{:?}", e);
+    // COMPILE error: s does not live long enough
     &s
 }
 ```
@@ -239,13 +238,170 @@ fn as_str(e: &Entity) -> &str {
 ```
 // this isn't valid syntax, but an approximate desugaring
 fn as_str<'a>(e: &'a Entity) -> &'a str {
-  'b: {
+  'b {
     let s = format!("{:?}", e);
     return &'a s
   }
 }
 ```
 
+---
+## Aliased mutable reference: Rust
+```c
+let mut vector = Vec::with_capacity(1);
+vector.push(23);
+let head = &vector[0];
+// COMPILE error: cannot borrow vector as mutable because it is also borrowed as immutable
+vector.push(42);
+println!("head is {}", head);
+```
+--
+```
+// this isn't valid syntax, but an approximate desugaring
+'a {
+  let mut vector = Vec::with_capacity(1);
+  vector.push(23);
+  'b {
+    let head: &'b i32 = Index::index::<'b>(&'b vector, 0)
+    'c {
+      // COMPILE error: cannot borrow vector as mutable because it is also borrowed as immutable
+      Vec::push(&'c mut vector, 42);
+    }
+    println!("head is {}", head);
+  }
+}
+```
+---
+## Borrow checker caveats: Rust
+
+* doesn't guarantee against leaks (but neither does GC)
+* when you need multiple mutable references, e.g. a graph, can either
+  - use runtime reference counted types (Rc) and mutability checks (RefCell)
+  - manage raw pointers yourself, encapsulated in unsafe { } blocks
+
+---
+## Data races: Scala
+```scala
+  class CountEvensVsOdds(reporter: ActorRef) extends Actor {
+    val state = Array(0, 0)
+    def receive = {
+      case x: Int =>
+        if (x % 2 == 0) {
+          state(0) = state(0) + 1
+        } else {
+          state(1) = state(1) + 1
+        }
+        if ((state(0) + state(1)) % 10 == 0) {
+          // RUNTIME error: sharing mutable state between threads
+          reporter ! state
+        }
+    }
+```
+---
+## Data races: Rust
+```c
+fn count_evens_vs_odds(rx: Receiver<i32>, tx: Sender<&Vec<i32>>) {
+    let mut state = vec![0, 0];
+    loop {
+        let x = rx.recv().unwrap();
+        if x % 2 == 0 {
+            state[0] += 1;
+        } else {
+            state[1] += 1;
+        }
+        if (state[0] + state[1]) % 10 == 0 {
+            // COMPILE error: state does not live long enough
+            // tx.send(&state).unwrap();
+        }
+    }
+}
+```
+---
+## Newtype: Scala
+```scala
+  case class Inches(self: Int) extends AnyVal {
+    def +(other: Inches): Inches = {
+      Inches(self + other.self)
+    }
+  }
+
+  case class Feet(self: Int) extends AnyVal {
+    def +(other: Feet): Feet = {
+      Feet(self + other.self)
+    }
+  }
+
+  def main(args: Array[String]) {
+    val i = Inches(1)
+    val i2 = Inches(2)
+    val f = Feet(1)
+    val f2 = Feet(2)
+    println(s"f + f2 = ${f + f2}")
+    println(s"i + i2 = ${i + i2}")
+    // COMPILE error: type mismatch
+    //println(s"f + i = ${f + i}")
+  }
+```
+---
+## Newtype: Rust
+```c
+#[derive(Debug)]
+struct Inches(i32);
+impl Add for Inches {
+    type Output = Inches;
+    fn add(self, other: Inches) -> Inches {
+        Inches(self.0 + other.0)
+    }
+}
+
+#[derive(Debug)]
+struct Feet(i32);
+impl Add for Feet {
+    type Output = Feet;
+    fn add(self, other: Feet) -> Feet {
+        Feet(self.0 + other.0)
+    }
+}
+
+fn main() {
+    let i = Inches(1);
+    let i2 = Inches(2);
+    let f = Feet(1);
+    let f2 = Feet(2);
+    println!("f + f2 = {:?}", f + f2);
+    println!("i + i2 = {:?}", i + i2);
+    // COMPILE error: mismatched types
+    //println!("f + i = {:?}", f + i);
+}
+```
+---
+## Macros: Rust
+```c
+macro_rules! newtype_number {
+    ($i:ident $t:ty) => {
+        #[derive(Debug)]
+        struct $i($t);        
+        impl Add for $i {
+            type Output = $i;
+            fn add(self, other: $i) -> $i {
+                $i(self.0 + other.0)
+            }
+        }
+    }
+}
+
+newtype_number!(Inches i32);
+newtype_number!(Feet i32);
+
+fn main() {
+    let i = Inches(1);
+    let i2 = Inches(2);
+    let f = Feet(1);
+    let f2 = Feet(2);
+    println!("f + f2 = {:?}", f + f2);
+    println!("i + i2 = {:?}", i + i2);
+}
+```
     </textarea>
     <script src="slides/remark-latest.min.js">
     </script>
