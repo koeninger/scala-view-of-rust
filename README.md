@@ -1,0 +1,1 @@
+See the slides at [https://koeninger.github.io/scala-view-of-rust](https://koeninger.github.io/scala-view-of-rust)
