@@ -19,10 +19,13 @@ path = "src/ownership.rs"
 name = "datarace"
 path = "src/datarace.rs"
 
-
 [[bin]]
 name = "adt"
 path = "src/adt.rs"
+
+[[bin]]
+name = "typeclass"
+path = "src/typeclass.rs"
 
 [[bin]]
 name = "newtype"

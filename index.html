@@ -376,10 +376,63 @@ impl<T> Option<T> {
 ```
 ---
 ## Typeclasses: Scala
+```scala
+object Json {
+  trait ToJson[T] {
+    def toJsonStr(t: T): String
+  }
+
+  implicit object IntToJson extends ToJson[Int] {
+    def toJsonStr(i: Int) = i.toString
+  }
+
+  implicit def ArrayToJson[S: ToJson] = new ToJson[Array[S]] {
+    def toJsonStr(a: Array[S]) = {
+      a.map(x => implicitly[ToJson[S]].toJsonStr(x)).
+        mkString("[", ", ", "]")
+    }
+  }
+
+  implicit class ToJsonSyntax[S: ToJson](s: S) {
+    def toJsonStr = implicitly[ToJson[S]].toJsonStr(s)
+  }
+}
+
+object TypeclassExample {
+  import Json._
+  def main(args: Array[String]) {
+    val v = Array(1, 2, 3, 4)
+    println(v.toJsonStr)
+  }
+}
+```
 
 ---
 ## Typeclasses: Rust
+```c
+trait ToJson {
+    fn to_json_str(&self) -> String;
+}
 
+impl ToJson for i32 {
+    fn to_json_str(&self) -> String {
+        self.to_string()
+    }
+}
+
+impl<T: ToJson> ToJson for Vec<T> {
+    fn to_json_str(&self) -> String {
+        format!("[{}]",
+                self.iter().map(|x| x.to_json_str()).
+                collect::<Vec<_>>().join(", "))
+    }
+}
+
+fn main() {
+    let v = vec![1, 2, 3, 4];
+    println!("{}", v.to_json_str());
+}
+```
 ---
 ## Newtype: Scala
 ```scala
