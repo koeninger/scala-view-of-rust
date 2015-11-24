@@ -361,7 +361,7 @@ impl Point {
 
 /// A sum type
 pub enum Option<T> {
-    None,
+    None,  // This will be optimized to a null pointer
     Some(T)
 }
 impl<T> Option<T> {
@@ -519,6 +519,14 @@ fn main() {
     println!("i + i2 = {:?}", i + i2);
 }
 ```
+---
+## Resources
+
+* [Code for these slides](https://github.com/koeninger/scala-view-of-rust)
+* [The Rust Book](http://doc.rust-lang.org/book/)
+* [Rust 101](http://www.ralfj.de/projects/rust-101/main.html)
+* [Learning Rust With Entirely Too Many Linked Lists](http://cglab.ca/~abeinges/blah/too-many-lists/book)
+* [The Rustonomicon](http://doc.rust-lang.org/nomicon/)
     </textarea>
     <script src="slides/remark-latest.min.js">
     </script>

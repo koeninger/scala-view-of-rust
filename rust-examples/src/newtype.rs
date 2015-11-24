@@ -33,6 +33,9 @@ fn main() {
     // error: mismatched types
     //println!("f + i = {:?}", f + i);
     println!("size of i32 {}", size_of::<i32>());
-        println!("size of &i32 {}", size_of::<&i32>());
+    println!("size of &i32 {}", size_of::<&i32>());
+    println!("size of [i32;4] {}", size_of::<[i32;4]>());
     println!("size of Feet {}", size_of::<Feet>());
+    println!("size of &Feet {}", size_of::<&Feet>());
+    println!("size of [Feet;4] {}", size_of::<[Feet;4]>());
 }
