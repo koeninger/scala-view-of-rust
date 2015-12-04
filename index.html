@@ -78,14 +78,15 @@ I'm a Rust noob... take what I say with a grain of salt
   - because the language helps you get it right, usually at **compile time**
 
 ---
-## Stuff that Rust doesn't have
+## Stuff that Rust doesn't have (besides GC)
 
 * null pointer exceptions
 * data races
+* Tuple22 limit
 * catching exceptions
 * inheritance
 * higher kinded types
-* a REPL
+* a good REPL
 
 ---
 ## Hello: Scala
@@ -107,7 +108,7 @@ object Hello {
 ---
 ## Hello: Rust
 
-```c
+```rust
 use std::io;
 
 fn main() {
@@ -153,7 +154,7 @@ class Bad {
     }
 
     val x = Some(23)
-    // scala would complain if this was a local variable instead of a class variable
+    // scala would complain if this was a local variable instead
     var y: Option[Int] = _
 
     blowup(x)
@@ -164,7 +165,7 @@ class Bad {
 ```
 ---
 ## Null Pointers: Rust
-```c
+```rust
 fn no_blowup(opt: &Option<u32>) {
     opt.map(|x| println!("I got an {:?}", x));
 }
@@ -189,7 +190,7 @@ fn main() {
 ```
 ---
 ## Ownership: Rust
-```c
+```rust
 fn main() {
     let three = outer();
     println!("Leaving main"); // Dropping three
@@ -232,7 +233,7 @@ fn inner(e: Entity) {
 
 ## Reference that would live too long: Rust
 
-```c
+```rust
 fn as_str(e: &Entity) -> &str {
     let s = format!("{:?}", e);
     // COMPILE error: s does not live long enough
@@ -253,11 +254,12 @@ fn as_str<'a>(e: &'a Entity) -> &'a str {
 
 ---
 ## Aliased mutable reference: Rust
-```c
+```rust
 let mut vector = Vec::with_capacity(1);
 vector.push(23);
 let head = &vector[0];
-// COMPILE error: cannot borrow vector as mutable because it is also borrowed as immutable
+// COMPILE error:
+// cannot borrow vector as mutable because it is also borrowed as immutable
 vector.push(42);
 println!("head is {}", head);
 ```
@@ -270,7 +272,8 @@ println!("head is {}", head);
   'b {
     let head: &'b i32 = Index::index::<'b>(&'b vector, 0)
     'c {
-      // COMPILE error: cannot borrow vector as mutable because it is also borrowed as immutable
+      // COMPILE error:
+      // cannot borrow vector as mutable because it is also borrowed as immutable
       Vec::push(&'c mut vector, 42);
     }
     println!("head is {}", head);
@@ -305,7 +308,7 @@ println!("head is {}", head);
 ```
 ---
 ## Data races: Rust
-```c
+```rust
 fn count_evens_vs_odds(rx: Receiver<i32>, tx: Sender<&Vec<i32>>) {
     let mut state = vec![0, 0];
     loop {
@@ -347,7 +350,7 @@ final case class Some[+A](x: A) extends Option[A] {
 ```
 ---
 ## Algebraic Data Types: Rust
-```c
+```rust
 /// A product type
 pub struct Point {
     x: f64,
@@ -409,7 +412,7 @@ object TypeclassExample {
 
 ---
 ## Typeclasses: Rust
-```c
+```rust
 trait ToJson {
     fn to_json_str(&self) -> String;
 }
@@ -461,7 +464,7 @@ fn main() {
 ```
 ---
 ## Newtype: Rust
-```c
+```rust
 #[derive(Debug)]
 struct Inches(i32);
 impl Add for Inches {
@@ -493,7 +496,7 @@ fn main() {
 ```
 ---
 ## Macros: Rust
-```c
+```rust
 macro_rules! newtype_number {
     ($i:ident $t:ty) => {
         #[derive(Debug)]
