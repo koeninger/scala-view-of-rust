@@ -1,6 +1,6 @@
 #[derive(Debug)]
 struct Entity {
-    id: u32
+    id: u32,
 }
 
 impl Entity {
@@ -24,13 +24,13 @@ fn outer() -> Entity {
     let one = Entity::new(1);
     let two = Entity::new(2);
     let three = Entity::new(3);
-    
+
     inner(two);
 
     // COMPILE error: use of moved value
-    //println!("this would be use-after-free {:?}", two);
+    // println!("this would be use-after-free {:?}", two);
 
-    println!("Leaving Outer");        
+    println!("Leaving Outer");
     three // Dropping one
 }
 
@@ -39,10 +39,10 @@ fn inner(e: Entity) {
 }
 
 // COMPILE error: s does not live long enough
-//fn as_str(e: &Entity) -> &str {
+// fn as_str(e: &Entity) -> &str {
 //    let s = format!("{:?}", e);
 //    &s
-//}
+// }
 
 // fn use_after_realloc() {
 //     let mut v = Vec::with_capacity(1);

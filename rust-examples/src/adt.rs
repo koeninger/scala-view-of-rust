@@ -2,7 +2,7 @@
 #[derive(Debug)]
 pub struct Point {
     x: f64,
-    y: f64
+    y: f64,
 }
 impl Point {
     fn distance_from_origin(&self) -> f64 {

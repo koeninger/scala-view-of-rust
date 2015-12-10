@@ -4,7 +4,7 @@ macro_rules! newtype_number {
     ($i:ident $t:ty) => {
         #[derive(Debug)]
         struct $i($t);
-        
+
         impl Add for $i {
             type Output = $i;
 

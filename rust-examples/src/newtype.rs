@@ -31,11 +31,11 @@ fn main() {
     println!("f + f2 = {:?}", f + f2);
     println!("i + i2 = {:?}", i + i2);
     // error: mismatched types
-    //println!("f + i = {:?}", f + i);
+    // println!("f + i = {:?}", f + i);
     println!("size of i32 {}", size_of::<i32>());
     println!("size of &i32 {}", size_of::<&i32>());
-    println!("size of [i32;4] {}", size_of::<[i32;4]>());
+    println!("size of [i32;4] {}", size_of::<[i32; 4]>());
     println!("size of Feet {}", size_of::<Feet>());
     println!("size of &Feet {}", size_of::<&Feet>());
-    println!("size of [Feet;4] {}", size_of::<[Feet;4]>());
+    println!("size of [Feet;4] {}", size_of::<[Feet; 4]>());
 }

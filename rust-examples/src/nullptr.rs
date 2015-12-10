@@ -8,7 +8,7 @@ fn main() {
     let x = Some(23);
     // COMPILE warning: single-assignment variable doesn't need to be mutable
     let mut y;
-    
+
     no_blowup(&x);
 
     // COMPILE error: use of possibly uninitialized variable: `y`
@@ -21,7 +21,8 @@ fn main() {
     y = None;
     no_blowup(&y);
 
-    // because references cant be null, enums with only 1 non-empty variant are optimized to a single pointer
+    // because references cant be null, enums with only 1 non-empty variant
+    // are optimized to a single pointer
     println!("size of u8 {}", size_of::<u8>());
     println!("size of &u8 {}", size_of::<&u8>());
     println!("size of Option<&u8> {}", size_of::<Option<&u8>>());

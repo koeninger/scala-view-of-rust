@@ -11,8 +11,10 @@ impl ToJson for i32 {
 impl<T: ToJson> ToJson for Vec<T> {
     fn to_json_str(&self) -> String {
         format!("[{}]",
-                self.iter().map(|x| x.to_json_str()).
-                collect::<Vec<_>>().join(", "))
+                self.iter()
+                    .map(|x| x.to_json_str())
+                    .collect::<Vec<_>>()
+                    .join(", "))
     }
 }
 
